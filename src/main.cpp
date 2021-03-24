@@ -18,6 +18,8 @@ using BYTE = unsigned char;
 //declaring function prototypes
 std::unique_ptr<BYTE[]> readByteFile(std::string filename, int imageWidth, int imageHeight);
 Mat ByteImageConverter(std::unique_ptr<BYTE[]> buffer, int imageWidth, int imageHeight);
+void annotateImage(Mat& image, const LineInfo& info);
+
 
 void help (const char **argv){
 	cout << "Invalid number of parameters supplied\n"
@@ -44,7 +46,7 @@ int main(int argc, const char*argv[])
 	Mat kernelX = Mat::ones(1, 9, CV_8UC1);
 	Mat kernelY = Mat::ones(9, 1, CV_8UC1);
 
-	ImgProcessor proc = ImgProcessor(image,kernelX, kernelY, 150, 255);
+	ImgProcessor proc = ImgProcessor(image.clone(),kernelX, kernelY, 150, 255);
 	bool save_images = true;
 	proc.run(save_images);
 	Mat maskedImgH = proc.getMaskedImages().first;
@@ -63,7 +65,14 @@ int main(int argc, const char*argv[])
 	LineDetectorV v = LineDetectorV(maskedImgV, minpixels, margin, nwindows);
 	v.run(save_images);
 	LineInfo info_v = v.getLines();
-	//log data points to csv file
+
+	//annotate lines on image..
+	cvtColor(image, image, CV_GRAY2BGR);
+	annotateImage(image, info_v);
+	annotateImage(image, info_h);
+	imwrite ("../annotatedImg.png", image);
+
+	//log x,y points to csv file
 	CsvWriter csv = CsvWriter(info_h, info_v);
 	if (!csv.save(out_file)){
 		cout << "error saving: " << out_file  << endl;
@@ -103,5 +112,22 @@ Mat ByteImageConverter(std::unique_ptr<BYTE[]> buffer, int imageWidth, int image
 		}
 	}
 	return image;
+
+}
+
+void annotateImage(Mat& image, const LineInfo& info){
+	//cvtColor(image, image, CV_GRAY2BGR);
+	for (unsigned int i = 0; i < info.size();i++){
+		vector<int>::const_iterator x1 =info[i].second.first.begin();
+		vector<int>::const_iterator y1 =info[i].second.second.begin();
+
+		vector<int>::const_iterator x2 =info[i].second.first.end() - 1;
+		vector<int>::const_iterator y2 =info[i].second.second.end() -1;
+		Point p1 = Point(*x1, *y1);
+		Point p2 = Point(*x2, *y2);
+
+		line(image, p1, p2, Scalar(0, 0, 255), 3);
+
+	}
 
 }
