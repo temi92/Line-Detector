@@ -19,7 +19,20 @@ The pipeline for the proposed algorithm is shown below
 
 * Horinzontal Lines <br>
 
-![horizontal](MaskedImgH.png)
+![horizontal_mask](MaskedImgH.png)
 
 * Vertical Lines
-![verical](MaskedImgV.png)
+![verical_mask](MaskedImgV.png)
+
+* For vertical line detection, a histogram of the image is calculated and the peaks are identified to figure out starting points for line search. For each window,  identify non zero pixels, if the amount of non zero pixels is greater than a specified threshold recenter the sliding window by the average of pixels in that window
+![vertical_line](vertical.png)
+
+* For horizontal line detection, image is divided into horizontal strips and identify non zero pixels in each strip
+
+![horizontal_line](horizontal.png)
+
+* Detected 2d pixel positions for horizontal and vertical lines are overlayed on the original Image
+![annotated_Img](annotatedImg.png)
+
+Categorising line types is based on where the lines are positioned on the court. 
+Exported output is a CSV file containing the 2d points of the various lines.
