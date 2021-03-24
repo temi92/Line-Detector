@@ -12,7 +12,14 @@ The pipeline for the proposed algorithm is shown below
 * The original input image is shown below:
 ![raw_img](raw_img.png)
 
-*The first step would be thresholding the image to obtain a binary mask
+* The first step would be thresholding the image to obtain a binary mask
 ![binary_mask](MaskedImg.png)
 
-*
+* The binary mask above as you can see is noisy, application of erosion techniques with horizontal and vertical kernels is done to segment horizontal and vertical lines
+
+* Horinzontal Lines <br>
+
+![horizontal](MaskedImgH.png)
+
+* Vertical Lines
+![verical](MaskedImgV.png)
